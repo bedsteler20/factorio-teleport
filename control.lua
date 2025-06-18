@@ -5,10 +5,26 @@ script.on_init(function()
     storage.players = storage.players or {}
 end)
 
+script.on_event(defines.events.on_console_command, function(event)
+    if event.command ~= "waypoints" then
+        return
+    end
+    local player = game.get_player(event.player_index)
+    if not player or not player.valid then
+        return
+    end
 
+    storage.players[player.index] = storage.players[player.index] or {}
+    local button_flow = mod_gui.get_button_flow(player)
+    if not button_flow["tp_button"] then
+        print("Creating button for player: " .. player.name)
+        button_flow.add { type = "sprite-button", name = "tp_button", sprite = "utility/refresh", style = mod_gui.button_style }
+    end
+end)
 
 script.on_event(defines.events.on_player_created, function(event)
     local player = game.get_player(event.player_index)
+    print("Player created: " .. player.name)
     if not player or not player.valid then
         return
     end
